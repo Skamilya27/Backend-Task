@@ -1,5 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
+import adminRouter from "./routes/admin.routes.js";
+import shopRouter from "./routes/shop.routes.js";
 
 const app = express();
 const PORT = 8080;
@@ -26,6 +28,15 @@ app.post('/add-product', (req, res) => {
     const productSize = req.body.productSize;
     console.log(`Product Name: ${productName}, Product Size: ${productSize}`);
     res.send('Product added successfully!');
+});
+
+app.use("/admin", adminRouter);
+app.use("/shop", shopRouter);
+
+
+
+app.use((req, res, next) => {
+    res.status(404).send("Sorry, the page you are looking for doesn't exist.");
 });
 
 
