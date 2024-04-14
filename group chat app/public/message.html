@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+</head>
+<body>
+    <h2>Welcome</h2>
+    <p>Welcome, <span id="usernameDisplay"></span>! <span id="messageDisplay"></span></p>
+    <form id="messageForm">
+        <label for="message">Message:</label>
+        <input type="text" id="message" name="message" required>
+        <button type="submit">Send</button>
+    </form>
+
+    <script>
+        // Get the username from local storage
+        const username = localStorage.getItem("username");
+        const usernameDisplay = document.getElementById("usernameDisplay");
+
+        // Display the username
+        if (username) {
+            usernameDisplay.textContent = username;
+        } else {
+            usernameDisplay.textContent = "Guest";
+        }
+
+        // Get the message from the server
+        fetch('/message')
+            .then(response => response.text())
+            .then(message => {
+                const messageDisplay = document.getElementById("messageDisplay");
+                messageDisplay.textContent = message;
+            })
+            .catch(error => {
+                console.error('Error retrieving message:', error);
+            });
+
+        // Get the form element
+        const form = document.getElementById("messageForm");
+
+        // Add event listener for form submission
+        form.addEventListener("submit", function(event) {
+            // Prevent the default form submission
+            event.preventDefault();
+
+            // Get the message from the form
+            const message = document.getElementById("message").value;
+
+            // Send the message to the server
+            fetch('/message', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message })
+            })
+            .then(() => {
+                // Update the message display
+                const messageDisplay = document.getElementById("messageDisplay");
+                messageDisplay.textContent = message;
+            })
+            .catch(error => {
+                console.error('Error sending message:', error);
+            });
+        });
+    </script>
+</body>
+</html>
